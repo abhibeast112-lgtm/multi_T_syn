@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SyncCore • Real-Time Tab Preferences</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      try {
+        var raw = localStorage.getItem('app_user_preferences_v2') || localStorage.getItem('app_user_preferences_v1');
+        if (raw) {
+          var prefs = JSON.parse(raw);
+          var isDark = prefs.darkMode === true;
+          document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+          if (isDark) {
+            document.documentElement.classList.add('dark', 'dark-theme');
+          } else {
+            document.documentElement.classList.remove('dark', 'dark-theme');
+          }
+          if (prefs.fontSize) {
+            document.documentElement.style.setProperty('--base-font-size', prefs.fontSize + 'px');
+            document.documentElement.style.fontSize = prefs.fontSize + 'px';
+          }
+          if (prefs.language) {
+            document.documentElement.lang = prefs.language;
+          }
+        } else {
+          // If no stored preference, match system preference
+          var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          document.documentElement.setAttribute('data-theme', systemDark ? 'dark' : 'light');
+          if (systemDark) {
+            document.documentElement.classList.add('dark', 'dark-theme');
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
